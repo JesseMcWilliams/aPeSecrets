@@ -36,9 +36,11 @@ $cred = Get-ResolvedCredential -Source WindowsCredentialManager -Params @{ Targe
 
 Extracted from [aPeDiscovery](../aPeDiscovery)'s `Modules\CredentialResolver.psm1` (2026-09-21),
 where the `CurrentUser`/`PSCredential`/`CP`/`CCP`/`Conjur` sources were originally built and
-tested against real infrastructure (`CP` end-to-end, `CCP`/`Conjur` implement the documented
-integration pattern but haven't been run against a live endpoint yet). aPeDiscovery now depends on
-this module instead of carrying its own copy, so a fix or a newly-verified detail for any of these
+tested against real infrastructure (`CP` end-to-end). `CCP` was independently live-verified here
+against a real PVWA/CCP host the same day, cross-checked against `CP` retrieving the same account
+(matching username, matching password length) - `Conjur` alone still only implements the
+documented integration pattern and hasn't been run against a live appliance yet. aPeDiscovery now
+depends on this module instead of carrying its own copy, so a fix or a newly-verified detail for any of these
 sources only needs to happen once. `WindowsCredentialManager` is new here, added and live-verified
 (round-tripped against a real Windows Credential Manager store, cross-checked with `cmdkey /list`)
 when this project was created, for

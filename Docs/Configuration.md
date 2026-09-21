@@ -60,10 +60,18 @@ password retrieval for two test accounts against a real installed Credential Pro
 
 ## CCP
 
-CyberArk's Central Credential Provider REST web service (`AIMWebService`). Implements the
-documented integration pattern; **not yet verified against a live CCP endpoint** - confirm every
-value against your own deployment (the `AIMWebService` virtual directory name in particular can
-differ by install) before relying on this in production.
+CyberArk's Central Credential Provider REST web service (`AIMWebService`), authenticated by client
+certificate. **Live-verified end-to-end** (2026-09-21): retrieved a real password via `-Source CCP`
+against a live PVWA/CCP host and confirmed it matched the same account retrieved independently via
+`-Source CP` (same username, same password length). One real diagnostic worth recording: an initial
+attempt returned CyberArk's structured `APPAP004E` ("Password object matching query ... was not
+found") even though the account existed and was retrievable via CP for the same AppID - the AppID's
+CCP-side provider authorization was missing/separate from its CP-side authorization on that Safe.
+Once granted on the CCP side, the identical query succeeded. If you hit `APPAP004E` with a CCP
+`Params` set that already works via `-Source CP`, check the AppID's CCP-specific provider
+permissions on that Safe before assuming a code or query-shape problem - confirm exact
+Safe/Folder/Object values against the Vault first either way, since a real typo produces the same
+error.
 
 | `Params` key | Required | Description |
 |---|---|---|
@@ -96,3 +104,20 @@ identity, and API version against your own deployment before relying on this in 
 > virtual directory name, supported query parameters, TLS/certificate requirements, Conjur API
 > version - vary by product version and by how your environment is configured. Confirm every
 > value against your own CyberArk deployment before relying on this for a production run.
+
+## Known regression-test fixture (On-Prem CyberArk)
+
+Per the maintainer, the following is a designated test account on the On-Prem CyberArk instance,
+safe to reuse for regression testing this module's `CP`/`CCP` sources (not committed anywhere as a
+runnable test - these values require that environment's own network/host trust to actually resolve,
+so they're recorded here for a human to plug in, not for an automated test to call unattended):
+
+- **Safe:** `McWilliams Jesse`
+- **Folder:** `root`
+- **Object:** `CA_Automation_User`
+- **AppID:** `APP_AIHost`
+- **PVWA/CCP host:** `https://pvwa.company.com`
+
+Confirmed live (2026-09-21) via both `CP` and `CCP` with these exact values - see the `CP`/`CCP`
+sections above for what that confirmed and the one real gotcha it surfaced (CCP-side provider
+authorization can be separate from CP-side authorization for the same AppID).
