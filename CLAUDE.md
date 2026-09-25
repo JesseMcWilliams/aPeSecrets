@@ -20,7 +20,7 @@ powershell.exe -NoProfile -ExecutionPolicy Bypass -File Tests\Run-Tests.ps1   # 
 - The suite must stay at 100% pass. Run the single test file while iterating and the full suite before you commit.
 
 ## Code rules
-- Save `.ps1`/`.psm1` files as UTF-8 with BOM, and use no PS 7-only syntax. See aPePAS `Claude_Docs/Reference_Lessons-Learned.md` §1 and §10.
+- Save `.ps1`/`.psm1` files as UTF-8 with BOM, and use no PS 7-only syntax. See aPePAS `Claude_Docs/Reference_Lessons-Learned-PowerShell.md` §1 and §2.
 - A new source needs: a `Get-CredentialFrom<Source>` function (plus `Set-` if the source is writable), a branch in `Get-/Set-ResolvedCredential`, a row in the `Claude_Docs/Reference_Configuration.md` table, a `## <Source>` section, and tests.
 - Conjur has not been live-verified. Don't describe it as verified.
 
