@@ -6,3 +6,10 @@ Secrets/
 # Editor/OS cruft
 .vscode/
 Thumbs.db
+
+# Added by aPeTemplate\New-ApeProject.ps1
+*.local.md
+*.log
+*.csv
+TestResults.xml
+desktop.ini

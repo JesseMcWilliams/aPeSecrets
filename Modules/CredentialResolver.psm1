@@ -23,7 +23,7 @@
     CP specifically HAS been verified live (2026-09-17, in aPeDiscovery) against a real installed
     Credential Provider/CLIPasswordSDK.exe, and that testing found (and fixed) a real bug:
     CLIPasswordSDK's /o output is a plain comma-separated list of VALUES in the requested field
-    order (e.g. "ThisIsMyPassword!,CAscanner2" for /o Password,PassProps.UserName) - NOT
+    order (e.g. "ThisIsMy_FAKE_Password6!,CAscanner2" for /o Password,PassProps.UserName) - NOT
     "Key=Value,Key=Value" pairs as an earlier version of this function incorrectly assumed (which
     would have thrown on every real call). Also found the real install path on that host was
     C:\Program Files\CyberArk\ApplicationPasswordSdk\CLIPasswordSDK.exe (64-bit Program Files, not
@@ -87,7 +87,7 @@ function Get-ResolvedCredential {
     .PARAMETER Source
         One of CurrentUser, PSCredential, WindowsCredentialManager, CP, CCP, Conjur.
     .PARAMETER Params
-        Hashtable of source-specific parameters. See Docs\Configuration.md.
+        Hashtable of source-specific parameters. See Claude_Docs\Reference_Configuration.md.
     #>
     [CmdletBinding()]
     param(

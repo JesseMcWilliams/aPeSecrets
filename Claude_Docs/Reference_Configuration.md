@@ -107,17 +107,6 @@ identity, and API version against your own deployment before relying on this in 
 
 ## Known regression-test fixture (On-Prem CyberArk)
 
-Per the maintainer, the following is a designated test account on the On-Prem CyberArk instance,
-safe to reuse for regression testing this module's `CP`/`CCP` sources (not committed anywhere as a
-runnable test - these values require that environment's own network/host trust to actually resolve,
-so they're recorded here for a human to plug in, not for an automated test to call unattended):
+The maintainer has designated two test accounts on the On-Prem CyberArk instance as safe to reuse for regression testing this module's `CP`/`CCP` sources: one for On-Prem testing and one for SaaS (ISPSS/Privilege Cloud) testing. The environment-specific values (safe, folder, AppID, PVWA/CCP host, object names) live in the gitignored `Live-Testing.local.md` at the project root, not in this repo. They only resolve with that environment's own network and host trust, so they're for a human (or a supervised Claude session) to plug in, not for an unattended automated test.
 
-- **Safe:** `McWilliams Jesse`
-- **Folder:** `root`
-- **Object:** `CA_Automation_User`
-- **AppID:** `APP_AIHost`
-- **PVWA/CCP host:** `https://pvwa.company.com`
-
-Confirmed live (2026-09-21) via both `CP` and `CCP` with these exact values - see the `CP`/`CCP`
-sections above for what that confirmed and the one real gotcha it surfaced (CCP-side provider
-authorization can be separate from CP-side authorization for the same AppID).
+Both objects were confirmed live (2026-09-21) through both `CP` and `CCP`: each source returned the same username and password length for the same object. The On-Prem object surfaced one real gotcha: CCP-side provider authorization can be separate from CP-side authorization for the same AppID (see the `CP`/`CCP` sections above). Once that authorization was in place, the SaaS object worked through both sources on the first attempt.
