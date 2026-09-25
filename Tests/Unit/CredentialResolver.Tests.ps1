@@ -8,7 +8,7 @@
     (DPAPI file / real Windows Credential Manager store) - no CyberArk connection needed.
     CP/CCP/Conjur are tested for parameter validation only; actually calling them requires a real
     CyberArk Credential Provider install, CCP endpoint, or Conjur appliance respectively - see
-    Docs\Configuration.md for what's been live-verified and what hasn't.
+    Claude_Docs\Reference_Configuration.md for what's been live-verified and what hasn't.
 #>
 
 BeforeAll {

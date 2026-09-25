@@ -13,7 +13,7 @@ dependency.
 (the classic Win32 Credential Manager store), `CP` (CyberArk Credential Provider,
 `CLIPasswordSDK.exe`), `CCP` (CyberArk Central Credential Provider / `AIMWebService` REST API), and
 `Conjur` (CyberArk Conjur's `authn`/`secrets` REST API). See
-[Docs\Configuration.md](Docs/Configuration.md) for the full parameter reference per source, and
+[Claude_Docs\Reference_Configuration.md](Claude_Docs/Reference_Configuration.md) for the full parameter reference per source, and
 what's actually been live-verified vs. only implements the documented integration pattern.
 
 ## Usage
@@ -32,6 +32,12 @@ Set-ResolvedCredential -Source WindowsCredentialManager -Credential (Get-Credent
 $cred = Get-ResolvedCredential -Source WindowsCredentialManager -Params @{ Target = 'MyServiceAccount' }
 ```
 
+## Documentation
+
+- **Source parameters and verification status:** [Claude_Docs/Reference_Configuration.md](Claude_Docs/Reference_Configuration.md)
+- **Pending user-doc updates:** [Claude_Docs/Planning_User-Docs-Backlog.md](Claude_Docs/Planning_User-Docs-Backlog.md)
+- **Contributor/Claude guide:** [CLAUDE.md](CLAUDE.md)
+
 ## Origin
 
 Extracted from [aPeDiscovery](../aPeDiscovery)'s `Modules\CredentialResolver.psm1` (2026-09-21),
@@ -45,7 +51,7 @@ sources only needs to happen once. `WindowsCredentialManager` is new here, added
 (round-tripped against a real Windows Credential Manager store, cross-checked with `cmdkey /list`)
 when this project was created, for
 [aPePAS](../aPePAS)'s own automation-credential use case - see aPePAS's
-`Docs\Automation-Credential-Sources-Design.md` for that design's context.
+`Claude_Docs\Design_Automation-Credential-Sources.md` for that design's context.
 
 ## Consumers
 
