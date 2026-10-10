@@ -1,6 +1,6 @@
 # aPeSecrets: Claude Code project notes
 
-A shared PowerShell module (`CredentialResolver.psm1`) that resolves a `PSCredential` from pluggable sources: CurrentUser, PSCredential (DPAPI file), WindowsCredentialManager, CP, CCP and Conjur. Its **runtime target is Windows PowerShell 5.1**, with no PS 7 dependency. The module deliberately does **not** use `Set-StrictMode`; see the comment at `Modules/CredentialResolver.psm1:43`. The test runner does use strict mode.
+A shared PowerShell module (`CredentialResolver.psm1`) that resolves a `PSCredential` from pluggable sources: CurrentUser, PSCredential (DPAPI file), WindowsCredentialManager, CP, CCP and Conjur. Its **runtime targets are Windows PowerShell 5.1 and PowerShell 7 on Windows** (aPeDiscovery is moving to 7; aPePAS still runs it on 5.1), so every change must pass the tests on both. The module deliberately does **not** use `Set-StrictMode`; see the comment at `Modules/CredentialResolver.psm1:43`. The test runner does use strict mode.
 
 ## Folder map
 - `Modules/CredentialResolver.psm1`: the whole module (~400 lines). It exports only `Get-ResolvedCredential` and `Set-ResolvedCredential`. There's one private `Get-/Set-CredentialFrom<Source>` function per source.

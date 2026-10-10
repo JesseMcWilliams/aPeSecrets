@@ -4,8 +4,8 @@ A small, shared PowerShell module that resolves a `PSCredential` from any of sev
 sources, so a script can authenticate somewhere without a human typing a password in and without
 that script needing to know or care where the credential actually comes from.
 
-Windows PowerShell 5.1, matching every other `aPe*` project on this machine — no PowerShell 7
-dependency.
+Runs on Windows PowerShell 5.1 and PowerShell 7 (Windows). The unit tests pass on both; the live
+`CP`/`CCP`/`Conjur` paths have not been exercised on 7 yet.
 
 ## Sources supported
 
