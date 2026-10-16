@@ -4,4 +4,5 @@
 
 | Date | Change | User doc / section it affects |
 |---|---|---|
+| 2026-10-15 | `Get-ResolvedCredential -Reason` and `Params.Reason` (CP and CCP) record a reason in the PVWA audit trail; Conjur warns | Reference_Configuration, README usage |
 | 2026-10-09 | Supported on PowerShell 7 as well as 5.1. The `CP` source now reports a missing `AppID` before checking whether `CLIPasswordSDK.exe` is installed. | Requirements; CP source errors |
