@@ -30,6 +30,9 @@ $cred = Get-ResolvedCredential -Source CP -Params @{
 # Or store one locally first, then read it back later:
 Set-ResolvedCredential -Source WindowsCredentialManager -Credential (Get-Credential) -Params @{ Target = 'MyServiceAccount' }
 $cred = Get-ResolvedCredential -Source WindowsCredentialManager -Params @{ Target = 'MyServiceAccount' }
+
+# Record why the credential was retrieved (CP and CCP; shows in the PVWA audit). Conjur warns instead.
+$cred = Get-ResolvedCredential -Source CCP -Params @{ BaseUrl = 'https://ccp.example.com'; AppID = 'MyAppID'; Safe = 'MySafe'; Object = 'MyObject' } -Reason 'Nightly report job'
 ```
 
 ## Documentation
@@ -47,7 +50,7 @@ against a real PVWA/CCP host the same day, cross-checked against `CP` retrieving
 (matching username, matching password length) - `Conjur` alone still only implements the
 documented integration pattern and hasn't been run against a live appliance yet. aPeDiscovery now
 depends on this module instead of carrying its own copy, so a fix or a newly-verified detail for any of these
-sources only needs to happen once. `WindowsCredentialManager` is new here, added and live-verified
+sources only needs to happen once. The `Reason` input (`-Reason` or `Params.Reason`) was live-verified for `CP` and `CCP` on 2026-10-15 (it shows in the account activity). `WindowsCredentialManager` is new here, added and live-verified
 (round-tripped against a real Windows Credential Manager store, cross-checked with `cmdkey /list`)
 when this project was created, for
 [aPePAS](../aPePAS)'s own automation-credential use case - see aPePAS's

@@ -88,6 +88,10 @@ function Get-ResolvedCredential {
         One of CurrentUser, PSCredential, WindowsCredentialManager, CP, CCP, Conjur.
     .PARAMETER Params
         Hashtable of source-specific parameters. See Claude_Docs\Reference_Configuration.md.
+    .PARAMETER Reason
+        A free-text reason recorded with the retrieval, so it shows in the CyberArk audit trail
+        (PVWA Activities). Overrides Params.Reason. Used by CP and CCP; ignored by the local
+        sources; Conjur has no reason field, so it warns instead.
     #>
     [CmdletBinding()]
     param(
@@ -95,8 +99,16 @@ function Get-ResolvedCredential {
         [ValidateSet('CurrentUser', 'PSCredential', 'WindowsCredentialManager', 'CP', 'CCP', 'Conjur')]
         [string] $Source,
         [hashtable] $Params = @{},
-        [string] $LogPath
+        [string] $LogPath,
+        [string] $Reason
     )
+
+    # Work on a copy so the caller's hashtable isn't modified.
+    $Params = if ($Params) { $Params.Clone() } else { @{} }
+    if ($Reason) { $Params.Reason = $Reason }
+    if ($Source -eq 'Conjur' -and $Params.Reason) {
+        Write-Warning "Conjur has no reason field; the Reason '$($Params.Reason)' was not sent."
+    }
 
     switch ($Source) {
         'CurrentUser'               { return $null }
@@ -266,7 +278,11 @@ function Get-CredentialFromCP {
     # itself being mistaken for a field separator - there is no documented way to know whether
     # CLIPasswordSDK escapes an embedded comma in a value, so this sidesteps the question entirely
     # rather than relying on split-by-position for the secret itself.
-    $passwordOutput = & $sdkPath GetPassword /p "AppDescs.AppID=$($Params.AppID)" /p "Query=$query" /o 'Password' 2>&1
+    # Reason (if given) is passed as /p Reason=... so the retrieval's reason shows in the PVWA audit.
+    $reasonArgs = @()
+    if ($Params.Reason) { $reasonArgs = @('/p', "Reason=$($Params.Reason)") }
+
+    $passwordOutput = & $sdkPath GetPassword /p "AppDescs.AppID=$($Params.AppID)" /p "Query=$query" @reasonArgs /o 'Password' 2>&1
     if ($LASTEXITCODE -ne 0) {
         throw "CLIPasswordSDK GetPassword failed for AppID '$($Params.AppID)' (exit code $LASTEXITCODE). Verify the AppID/Safe/Folder/Object values and that this host is registered with the CP. (Output withheld in case it echoed the query back with sensitive values.)"
     }
@@ -277,7 +293,7 @@ function Get-CredentialFromCP {
 
     $userName = $Params.UserName
     if (-not $userName) {
-        $userNameOutput = & $sdkPath GetPassword /p "AppDescs.AppID=$($Params.AppID)" /p "Query=$query" /o 'PassProps.UserName' 2>&1
+        $userNameOutput = & $sdkPath GetPassword /p "AppDescs.AppID=$($Params.AppID)" /p "Query=$query" @reasonArgs /o 'PassProps.UserName' 2>&1
         if ($LASTEXITCODE -eq 0) {
             $candidate = ($userNameOutput | Select-Object -Last 1)
             if ($candidate -and $candidate -ne '<na>') { $userName = $candidate }

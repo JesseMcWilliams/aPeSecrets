@@ -13,6 +13,10 @@ same `Params` shape described below regardless of what's calling them.
 | `CCP` | Yes | No - CyberArk-managed |
 | `Conjur` | Yes | No - CyberArk-managed |
 
+## Reason (audit trail)
+
+`Get-ResolvedCredential -Reason <text>` sets the reason for one call and overrides `Params.Reason`; with no `-Reason`, `Params.Reason` is used. `CP` and `CCP` send it to CyberArk. `Conjur` has no reason field, so a reason makes it write a warning and is not sent. The local sources (`CurrentUser`, `PSCredential`, `WindowsCredentialManager`) ignore it. The caller's `Params` hashtable is not modified. A retrieval served from the Credential Provider cache is not audited again, so it records no reason.
+
 ## CurrentUser
 
 Run as whatever account is already running the calling script. `Params` is ignored.
@@ -57,6 +61,7 @@ password retrieval for two test accounts against a real installed Credential Pro
 | `Safe`/`Folder`/`Object` | One of these | Built into a query string if `Query` isn't given directly. |
 | `ClipasswordsdkPath` | No | Defaults to `C:\Program Files\CyberArk\ApplicationPasswordSdk\CLIPasswordSDK.exe` (confirmed live; older/other installs may use `Program Files (x86)`). |
 | `UserName` | No | Fallback if the CP doesn't return `PassProps.UserName` for this account. |
+| `Reason` | No | Sent as `/p Reason=<text>` on each `CLIPasswordSDK` call, so it appears in the PVWA audit (Activities). **Live-verified** 2026-10-15. |
 
 ## CCP
 
@@ -79,7 +84,7 @@ error.
 | `AppID` | Yes | The registered Application ID. |
 | `Query` | One of these | A raw AIM query string. |
 | `Safe`/`Folder`/`Object` | One of these | Built into a query string if `Query` isn't given directly. |
-| `Reason` | No | Passed through as the `Reason` query parameter, if your CCP policy requires one. |
+| `Reason` | No | Passed through as the `Reason` query parameter, so it appears in the PVWA audit and satisfies a CCP policy that requires one. |
 | `ClientCertificateThumbprint` | No | For mutual-TLS AppIDs. The certificate must already be installed in `LocalMachine\My` or `CurrentUser\My`. |
 
 ## Conjur

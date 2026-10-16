@@ -4,3 +4,4 @@
 
 | Date | Change | User doc / section it affects |
 |---|---|---|
+| 2026-10-15 | `Get-ResolvedCredential -Reason` and `Params.Reason` (CP and CCP) record a reason in the PVWA audit trail; Conjur warns | Reference_Configuration, README usage |

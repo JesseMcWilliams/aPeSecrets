@@ -149,3 +149,41 @@ Describe 'Set-ResolvedCredential - unsupported sources' {
         { Set-ResolvedCredential -Source CP -Credential $cred } | Should -Throw
     }
 }
+
+Describe 'Get-ResolvedCredential - Reason' {
+    BeforeAll {
+        # A .cmd stands in for CLIPasswordSDK.exe: it logs its arguments and prints a fake value.
+        $script:ArgLog = Join-Path $script:TempDir 'sdkargs.txt'
+        $script:FakeCmd = Join-Path $script:TempDir 'FakeSdk.cmd'
+        Set-Content -LiteralPath $script:FakeCmd -Encoding ASCII -Value @(
+            '@echo off'
+            ('echo %* >> "{0}"' -f $script:ArgLog)
+            'echo FakeValue'
+        )
+    }
+    BeforeEach { if (Test-Path $script:ArgLog) { Set-Content -LiteralPath $script:ArgLog -Value '' } }
+
+    It 'CR20 - CP passes Params.Reason to CLIPasswordSDK as /p Reason=' {
+        Get-ResolvedCredential -Source CP -Params @{ ClipasswordsdkPath = $script:FakeCmd; AppID = 'A'; Safe = 'S'; Object = 'O'; UserName = 'u'; Reason = 'Nightly job' } | Out-Null
+        (Get-Content -LiteralPath $script:ArgLog -Raw) | Should -Match 'Reason=Nightly job'
+    }
+
+    It 'CR21 - the -Reason parameter overrides Params.Reason and leaves the caller''s hashtable alone' {
+        $p = @{ ClipasswordsdkPath = $script:FakeCmd; AppID = 'A'; Safe = 'S'; Object = 'O'; UserName = 'u'; Reason = 'From params' }
+        Get-ResolvedCredential -Source CP -Params $p -Reason 'From parameter' | Out-Null
+        $log = Get-Content -LiteralPath $script:ArgLog -Raw
+        $log | Should -Match 'Reason=From parameter'
+        $log | Should -Not -Match 'From params'
+        $p.Reason | Should -Be 'From params'
+    }
+
+    It 'CR22 - CP sends no Reason argument when none is given' {
+        Get-ResolvedCredential -Source CP -Params @{ ClipasswordsdkPath = $script:FakeCmd; AppID = 'A'; Safe = 'S'; Object = 'O'; UserName = 'u' } | Out-Null
+        (Get-Content -LiteralPath $script:ArgLog -Raw) | Should -Not -Match 'Reason'
+    }
+
+    It 'CR23 - Conjur warns that it has no reason field' {
+        $w = try { Get-ResolvedCredential -Source Conjur -Params @{} -Reason 'x' 3>&1 } catch { $_ }
+        ($w | Out-String) | Should -Match 'no reason field'
+    }
+}
