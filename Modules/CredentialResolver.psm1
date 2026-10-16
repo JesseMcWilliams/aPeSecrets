@@ -252,11 +252,13 @@ function Get-CredentialFromCP {
         'C:\Program Files\CyberArk\ApplicationPasswordSdk\CLIPasswordSDK.exe'
     }
 
-    if (-not (Test-Path -Path $sdkPath)) {
-        throw "CLIPasswordSDK.exe not found at '$sdkPath'. Confirm the Credential Provider (CP) is installed on this host, or set 'ClipasswordsdkPath' in Params to its actual location."
-    }
+    # Config errors first, so a missing AppID is reported the same way whether or not the
+    # Credential Provider happens to be installed on this host.
     if (-not $Params.AppID) {
         throw "CP source requires 'AppID' in Params."
+    }
+    if (-not (Test-Path -Path $sdkPath)) {
+        throw "CLIPasswordSDK.exe not found at '$sdkPath'. Confirm the Credential Provider (CP) is installed on this host, or set 'ClipasswordsdkPath' in Params to its actual location."
     }
 
     $query = $Params.Query
